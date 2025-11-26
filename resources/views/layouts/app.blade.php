@@ -8,95 +8,53 @@
     @stack('head')
 </head>
 <body class="bg-slate-100 text-slate-900">
-    @php
-        $navLinks = [
-            ['label' => 'Home', 'route' => 'home', 'icon' => '🏠'],
-            ['label' => 'Katalog Publik', 'route' => 'catalog.index', 'icon' => '🛒'],
-            ['label' => 'Dashboard Penjual', 'route' => 'seller.home', 'icon' => '📈'],
-            ['label' => 'Kelola Produk', 'route' => 'products.index', 'icon' => '📦'],
-        ];
-    @endphp
-    <div>
-        <aside id="app-sidebar" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 shadow-xl transform -translate-x-full transition-transform duration-200 z-30 flex flex-col">
-            <div class="px-6 py-6 border-b border-slate-100 flex items-center justify-between">
-                <div>
-                    <p class="text-xs tracking-[0.4em] uppercase text-indigo-500 font-semibold">Sellora</p>
-                    <h2 class="text-2xl font-semibold mt-2">Navigation</h2>
-                </div>
-                <button id="sidebarClose" class="text-slate-400 hover:text-slate-900">
-                    ✕
-                </button>
+    <div class="min-h-screen flex flex-col">
+        <header class="sticky top-0 z-10 bg-white border-b border-slate-100">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap gap-4 items-center justify-between">
+                <a href="{{ route('home') }}" class="flex items-center gap-3">
+                    <img src="{{ asset('images/sellora-logo.png') }}" alt="Sellora" class="h-8 w-auto">
+                </a>
+                <nav class="flex flex-wrap gap-4 text-sm font-medium text-slate-600 items-center">
+                    <a href="{{ route('catalog.index') }}" class="hover:text-purple-800">Katalog Produk</a>
+                    <a href="{{ route('seller.home') }}" class="hover:text-purple-800">Dashboard</a>
+                    <a href="{{ route('products.create') }}" class="hover:text-purple-800">Upload Produk</a>
+                    <a href="{{ route('reports.seller') }}" class="hover:text-purple-800">Laporan</a>
+                    <a href="{{ route('alerts.orders') }}" class="hover:text-purple-800">Alert</a>
+                    <div class="relative">
+                        <button id="profileToggle" class="inline-flex items-center gap-1 text-purple-700 hover:text-purple-900">
+                            Profile
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.104l3.71-3.872a.75.75 0 1 1 1.08 1.04l-4.24 4.43a.75.75 0 0 1-1.08 0l-4.24-4.43a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-2 text-sm">
+                            <a href="{{ route('seller.home') }}" class="block px-4 py-2 text-slate-600 hover:bg-slate-50">Detail Profil</a>
+                            <form action="{{ route('seller.logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-rose-600 hover:bg-rose-50">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                </nav>
             </div>
-            <nav class="px-4 py-6 space-y-1 text-sm flex-1 overflow-y-auto">
-                @foreach ($navLinks as $link)
-                    <a href="{{ route($link['route']) }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-600">
-                        <span>{{ $link['icon'] }}</span>
-                        {{ $link['label'] }}
-                    </a>
-                @endforeach
-            </nav>
-        </aside>
+        </header>
 
-        <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 hidden z-20"></div>
-
-        <div id="app-content" class="min-h-screen transition-all duration-200">
-            <header class="sticky top-0 z-10 bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
-                <button id="sidebarToggle" class="inline-flex items-center gap-2 bg-slate-900 text-white px-3 py-2 rounded-lg">
-                    ☰
-                    <span class="text-sm font-medium">Menu</span>
-                </button>
-                <div class="flex items-center gap-3 text-sm">
-                    <span class="text-slate-500">Sellora Platform</span>
-                    <a href="{{ route('home') }}" class="text-indigo-600 hover:text-indigo-800">Home</a>
-                </div>
-            </header>
-
-            <main class="p-4">
-                @yield('content')
-            </main>
-        </div>
+        <main class="flex-1 p-4">
+            @yield('content')
+        </main>
     </div>
 
     <script>
-        const sidebar = document.getElementById('app-sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        const content = document.getElementById('app-content');
-        let sidebarVisible = false;
+        const profileToggle = document.getElementById('profileToggle');
+        const profileDropdown = document.getElementById('profileDropdown');
 
-        const renderSidebar = () => {
-            if (!sidebar) return;
-            const isDesktop = window.innerWidth >= 1024;
-            if (sidebarVisible) {
-                sidebar.classList.remove('-translate-x-full');
-                if (isDesktop) {
-                    overlay?.classList.add('hidden');
-                } else {
-                    overlay?.classList.remove('hidden');
-                }
-                content?.classList.add('lg:pl-64');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay?.classList.add('hidden');
-                content?.classList.remove('lg:pl-64');
-            }
-        };
-
-        const closeSidebar = () => {
-            sidebarVisible = false;
-            renderSidebar();
-        };
-
-        document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-            sidebarVisible = !sidebarVisible;
-            renderSidebar();
+        profileToggle?.addEventListener('click', () => {
+            profileDropdown?.classList.toggle('hidden');
         });
 
-        document.getElementById('sidebarClose')?.addEventListener('click', closeSidebar);
-        overlay?.addEventListener('click', closeSidebar);
-
-        window.addEventListener('resize', () => {
-            if (window.innerWidth < 1024) {
-                closeSidebar();
+        document.addEventListener('click', (event) => {
+            if (!profileToggle?.contains(event.target) && !profileDropdown?.contains(event.target)) {
+                profileDropdown?.classList.add('hidden');
             }
         });
     </script>

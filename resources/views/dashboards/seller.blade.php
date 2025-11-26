@@ -14,88 +14,97 @@
         $loggedSellerId = session('seller_auth_id');
     @endphp
 
-    <div class="max-w-6xl mx-auto px-4 py-10 space-y-6">
-        <header class="space-y-3">
-            <div class="flex flex-wrap justify-between items-start gap-4">
-                <div>
-                    <h1 class="text-3xl font-semibold">Dashboard Penjual (SRS-Sellora-08)</h1>
-                    <p class="text-sm text-slate-600">
-                        Monitor stok produk, nilai rating, serta lokasi pemberi rating untuk toko pilihan.
-                    </p>
+    <div class="bg-gradient-to-b from-purple-50 via-white to-white">
+        <div class="max-w-6xl mx-auto px-4 py-10 space-y-8">
+            <header class="bg-white/80 backdrop-blur rounded-3xl border border-purple-100 shadow-sm p-8 space-y-6">
+                <div class="flex flex-wrap justify-between items-start gap-4">
+                    <div class="space-y-2">
+                        <p class="text-xs tracking-[0.5em] uppercase text-purple-500 font-semibold">Sellora Insight</p>
+                        <h1 class="text-3xl font-semibold text-purple-900">Dashboard Penjual</h1>
+                        <p class="text-sm text-slate-600">
+                            Monitor stok, performa rating, serta wilayah pelanggan untuk toko pilihan Anda.
+                            <a href="{{ route('profile.show', $seller) }}" class="text-purple-600 hover:text-purple-800 underline ml-2">Lihat profil lengkap</a>
+                        </p>
+                    </div>
+                    @if ($loggedSellerId === $seller->id)
+                        <form action="{{ route('seller.logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="text-sm text-rose-600 hover:text-rose-800">Keluar</button>
+                        </form>
+                    @endif
                 </div>
-                @if ($loggedSellerId === $seller->id)
-                    <form action="{{ route('seller.logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="text-sm text-rose-600 hover:text-rose-800">Keluar</button>
-                    </form>
-                @endif
-            </div>
-            <div class="flex flex-wrap gap-3 items-center">
-                <label for="sellerSwitcher" class="text-sm font-medium text-slate-700">Pilih toko:</label>
-                <select id="sellerSwitcher" class="border-slate-300 rounded-lg text-sm py-2">
-                    @foreach ($allSellers as $sellerOption)
-                        <option value="{{ route('dashboard.seller', $sellerOption) }}" @selected($sellerOption->id === $seller->id)>
-                            {{ $sellerOption->store_name }} ({{ ucfirst($sellerOption->status) }})
-                        </option>
-                    @endforeach
-                </select>
-                <a href="{{ route('products.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800">Kelola Produk →</a>
-            </div>
-        </header>
+                <div class="flex flex-wrap gap-3 items-center">
+                    <label for="sellerSwitcher" class="text-sm font-medium text-purple-800">Pilih toko:</label>
+                    <select id="sellerSwitcher" class="border-purple-200 focus:border-purple-400 focus:ring-purple-400 rounded-lg text-sm py-2">
+                        @foreach ($allSellers as $sellerOption)
+                            <option value="{{ route('dashboard.seller', $sellerOption) }}" @selected($sellerOption->id === $seller->id)>
+                                {{ $sellerOption->store_name }} ({{ ucfirst($sellerOption->status) }})
+                            </option>
+                        @endforeach
+                    </select>
+                    <a href="{{ route('products.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800">
+                        Kelola Produk
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 10a.75.75 0 0 1 .75-.75h7.19l-2.22-2.22a.75.75 0 1 1 1.06-1.06l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.75.75 0 1 1-1.06-1.06l2.22-2.22H5.75A.75.75 0 0 1 5 10Z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </div>
+            </header>
 
-        @if (session('status') === 'seller_logged_in')
-            <div class="rounded-md bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-700">
-                Login berhasil. Selamat datang kembali di dashboard {{ $seller->store_name }}.
-            </div>
-        @endif
+            @if (session('status') === 'seller_logged_in')
+                <div class="rounded-md bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-700">
+                    Login berhasil. Selamat datang kembali di dashboard {{ $seller->store_name }}.
+                </div>
+            @endif
 
-        <section class="grid md:grid-cols-3 gap-4">
-            <div class="bg-white rounded-xl shadow p-5">
-                <p class="text-sm text-slate-500">Total Produk</p>
-                <p class="text-3xl font-semibold mt-2">{{ $productStocks->count() }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow p-5">
-                <p class="text-sm text-slate-500">Total Stok</p>
-                <p class="text-3xl font-semibold mt-2">{{ $productStockValues->sum() }}</p>
-            </div>
-            <div class="bg-white rounded-xl shadow p-5">
-                <p class="text-sm text-slate-500">Jumlah Review</p>
-                <p class="text-3xl font-semibold mt-2">{{ $ratingCounts->sum() }}</p>
-            </div>
-        </section>
+            <section class="grid md:grid-cols-3 gap-4">
+                <div class="bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
+                    <p class="text-sm text-slate-500">Total Produk</p>
+                    <p class="text-3xl font-semibold mt-2 text-purple-900">{{ $productStocks->count() }}</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
+                    <p class="text-sm text-slate-500">Total Stok</p>
+                    <p class="text-3xl font-semibold mt-2 text-purple-900">{{ $productStockValues->sum() }}</p>
+                </div>
+                <div class="bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
+                    <p class="text-sm text-slate-500">Jumlah Review</p>
+                    <p class="text-3xl font-semibold mt-2 text-purple-900">{{ $ratingCounts->sum() }}</p>
+                </div>
+            </section>
 
-        <section class="grid md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-xl shadow p-5">
+            <section class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-3xl border border-purple-100 shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-lg font-semibold text-purple-900">Sebaran Stok per Produk</h2>
+                            <p class="text-xs text-slate-500">Menemukan produk dengan stok menipis.</p>
+                        </div>
+                    </div>
+                    <canvas id="productStockChart" height="240"></canvas>
+                </div>
+                <div class="bg-white rounded-3xl border border-purple-100 shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-lg font-semibold text-purple-900">Nilai Rating per Produk</h2>
+                            <p class="text-xs text-slate-500">Rata-rata rating dengan jumlah review.</p>
+                        </div>
+                    </div>
+                    <canvas id="productRatingChart" height="240"></canvas>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-3xl border border-purple-100 shadow p-6">
                 <div class="flex justify-between items-center mb-4">
                     <div>
-                        <h2 class="text-lg font-semibold">Sebaran Stok per Produk</h2>
-                        <p class="text-xs text-slate-500">Menemukan produk dengan stok menipis.</p>
+                        <h2 class="text-lg font-semibold text-purple-900">Sebaran Pemberi Rating per Provinsi</h2>
+                        <p class="text-xs text-slate-500">Mengetahui jangkauan pelanggan.</p>
                     </div>
                 </div>
-                <canvas id="productStockChart" height="240"></canvas>
-            </div>
-            <div class="bg-white rounded-xl shadow p-5">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <h2 class="text-lg font-semibold">Nilai Rating per Produk</h2>
-                        <p class="text-xs text-slate-500">Rata-rata rating dengan jumlah review.</p>
-                    </div>
+                <div class="max-w-2xl mx-auto">
+                    <canvas id="ratingProvinceChart" height="260"></canvas>
                 </div>
-                <canvas id="productRatingChart" height="240"></canvas>
-            </div>
-        </section>
-
-        <section class="bg-white rounded-xl shadow p-5">
-            <div class="flex justify-between items-center mb-4">
-                <div>
-                    <h2 class="text-lg font-semibold">Sebaran Pemberi Rating per Provinsi</h2>
-                    <p class="text-xs text-slate-500">Mengetahui jangkauan pelanggan.</p>
-                </div>
-            </div>
-            <div class="max-w-2xl mx-auto">
-                <canvas id="ratingProvinceChart" height="260"></canvas>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
 @endsection
 

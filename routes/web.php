@@ -41,6 +41,9 @@ Route::middleware('seller.auth')->group(function () {
 });
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/alerts', \App\Http\Controllers\AlertController::class)->name('alerts.orders');
+Route::get('/reports/seller', [\App\Http\Controllers\SellerReportController::class, 'index'])->name('reports.seller');
+Route::get('/profile/{seller}', [\App\Http\Controllers\SellerProfileController::class, 'show'])->name('profile.show');
 
 Route::get('/seller/login', [SellerAuthController::class, 'create'])->name('seller.login');
 Route::post('/seller/login', [SellerAuthController::class, 'store'])->name('seller.login.attempt');
