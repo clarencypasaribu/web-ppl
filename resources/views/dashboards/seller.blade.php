@@ -18,7 +18,7 @@
         <header class="space-y-3">
             <div class="flex flex-wrap justify-between items-start gap-4">
                 <div>
-                    <h1 class="text-3xl font-semibold">Dashboard Penjual (SRS-Sellora-08)</h1>
+                    <h1 class="text-3xl font-semibold">Dashboard Penjual</h1>
                     <p class="text-sm text-slate-600">
                         Monitor stok produk, nilai rating, serta lokasi pemberi rating untuk toko pilihan.
                     </p>
@@ -39,7 +39,6 @@
                         </option>
                     @endforeach
                 </select>
-                <a href="{{ route('products.index') }}" class="text-sm text-indigo-600 hover:text-indigo-800">Kelola Produk →</a>
             </div>
         </header>
 

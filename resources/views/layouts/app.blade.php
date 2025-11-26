@@ -41,16 +41,11 @@
 
         <div id="app-content" class="min-h-screen transition-all duration-200">
             <header class="sticky top-0 z-10 bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
-                <button id="sidebarToggle" class="inline-flex items-center gap-2 bg-slate-900 text-white px-3 py-2 rounded-lg">
-                    ☰
-                    <span class="text-sm font-medium">Menu</span>
-                </button>
                 <div class="flex items-center gap-3 text-sm">
                     <span class="text-slate-500">Sellora Platform</span>
                     <a href="{{ route('home') }}" class="text-indigo-600 hover:text-indigo-800">Home</a>
                 </div>
             </header>
-
             <main class="p-4">
                 @yield('content')
             </main>

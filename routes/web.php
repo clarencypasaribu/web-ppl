@@ -41,6 +41,8 @@ Route::middleware('seller.auth')->group(function () {
 });
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
+Route::get('/catalog/{product}', [CatalogController::class, 'show'])->name('catalog.show');
+Route::post('/catalog/{product}/reviews', [CatalogController::class, 'storeReview'])->name('catalog.reviews.store');
 
 Route::get('/seller/login', [SellerAuthController::class, 'create'])->name('seller.login');
 Route::post('/seller/login', [SellerAuthController::class, 'store'])->name('seller.login.attempt');
