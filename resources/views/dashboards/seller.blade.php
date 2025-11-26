@@ -23,6 +23,7 @@
                         <h1 class="text-3xl font-semibold text-purple-900">Dashboard Penjual</h1>
                         <p class="text-sm text-slate-600">
                             Monitor stok, performa rating, serta wilayah pelanggan untuk toko pilihan Anda.
+                            <a href="{{ route('profile.show', $seller) }}" class="text-purple-600 hover:text-purple-800 underline ml-2">Lihat profil lengkap</a>
                         </p>
                     </div>
                     @if ($loggedSellerId === $seller->id)
