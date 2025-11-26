@@ -3,23 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MartPlace - Marketplace Management Platform</title>
+    <title>Sellora - Marketplace Management Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-slate-900">
+    @php
+        use Illuminate\Support\Facades\Storage;
+        use Illuminate\Support\Str;
+    @endphp
     <div class="relative overflow-hidden">
         <nav class="bg-white border-b border-slate-100">
-            <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-2 font-semibold text-xl text-indigo-600">
-                    <span class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">M</span>
-                    MartPlace
+            <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap gap-4 items-center justify-between">
+                <a href="{{ route('home') }}" class="flex items-center gap-3">
+                    <img src="{{ asset('images/sellora-logo.png') }}" alt="Sellora" class="h-10 w-auto">
+                    <span class="sr-only">Sellora</span>
+                </a>
+                <div class="flex-1 flex items-center gap-6 min-w-full md:min-w-[55%]">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 bg-slate-100 rounded-full px-4 py-2 ring-1 ring-purple-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 3.473 9.745l3.64 3.64a.75.75 0 1 0 1.06-1.06l-3.64-3.64A5.5 5.5 0 0 0 9 3.5Zm-4 5.5a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" clip-rule="evenodd" />
+                            </svg>
+                            <input type="text" placeholder="Cari produk..." class="bg-transparent flex-1 text-sm text-slate-600 placeholder:text-slate-400 focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+                        <a href="#catalog" class="hover:text-slate-900">Katalog</a>
+                        <a href="#features" class="hover:text-slate-900">Fitur</a>
+                    </div>
                 </div>
-                <div class="flex items-center gap-3 text-sm font-medium">
+                <div class="flex items-center gap-3 text-slate-600">
                     <div class="relative">
-                        <button id="headerDropdownBtn" class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900">
+                        <button id="headerDropdownBtn" class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-purple-800">
                             Login
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.104l3.71-3.872a.75.75 0 111.08 1.04l-4.24 4.43a.75.75 0 01-1.08 0l-4.24-4.43a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.104l3.71-3.872a.75.75 0 1 1 1.08 1.04l-4.24 4.43a.75.75 0 0 1-1.08 0l-4.24-4.43a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
                             </svg>
                         </button>
                         <div id="headerDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-2 text-sm">
@@ -27,106 +45,156 @@
                             <a href="{{ route('admin.login') }}" class="block px-4 py-2 text-slate-600 hover:bg-slate-50">Login Admin</a>
                         </div>
                     </div>
-                    <a href="{{ route('sellers.register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Registrasi Penjual</a>
+                    <a href="{{ route('sellers.register') }}" class="bg-purple-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-purple-700">Registrasi</a>
                 </div>
             </div>
         </nav>
 
-        <header class="bg-gradient-to-b from-white to-indigo-50">
-            <div class="max-w-6xl mx-auto px-4 py-16 grid gap-10 items-center">
-                <div class="space-y-6">
-                    <p class="text-xs tracking-[0.3em] uppercase text-indigo-500 font-semibold">MartPlace Platform</p>
-                    <h1 class="text-4xl font-bold leading-tight">
-                        Kelola Penjual, Produk, dan Insight Marketplace dalam Satu Dashboard
-                    </h1>
-                    <p class="text-slate-600 text-lg">
-                        MartPlace merangkum kebutuhan marketplace modern: alur registrasi penjual yang terarah, panel verifikasi untuk tim admin, manajemen katalog yang rapi, serta insight mendalam mengenai performa marketplace dan toko.
-                    </p>
-                    <div class="flex flex-wrap gap-3 text-sm">
-                        <a href="{{ route('sellers.register') }}" class="bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700">Registrasi Penjual</a>
-                        <a href="{{ route('seller.login') }}" class="px-5 py-3 rounded-lg border border-indigo-200 text-indigo-700 hover:border-indigo-400">Login Penjual</a>
-                    </div>
-                    <div class="grid grid-cols-3 gap-4 text-center">
-                        <div class="bg-white border border-slate-100 rounded-xl p-4">
-                            <p class="text-3xl font-semibold text-indigo-600">100%</p>
-                            <p class="text-xs text-slate-500 mt-1">Fitur alur lengkap</p>
-                        </div>
-                        <div class="bg-white border border-slate-100 rounded-xl p-4">
-                            <p class="text-3xl font-semibold text-indigo-600">4+</p>
-                            <p class="text-xs text-slate-500 mt-1">Grafik insight</p>
-                        </div>
-                        <div class="bg-white border border-slate-100 rounded-xl p-4">
-                            <p class="text-3xl font-semibold text-indigo-600">2</p>
-                            <p class="text-xs text-slate-500 mt-1">Jenis dashboard</p>
-                        </div>
-                    </div>
+        <header class="bg-gradient-to-r from-purple-600 to-purple-500 text-white">
+            <div class="max-w-6xl mx-auto px-4 py-20 text-center space-y-6">
+                <p class="text-sm uppercase tracking-[0.4em] text-white/70 font-semibold">Platform Penjual Sellora</p>
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+                    Kelola Toko Lebih Mudah dan Cepat bersama Sellora
+                </h1>
+                <p class="text-lg max-w-3xl mx-auto text-white/90">
+                    Sellora membantu penjual mempublikasikan produk, menyiapkan katalog profesional, serta memantau komentar dan rating pelanggan dalam satu tempat.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#catalog" class="bg-white text-purple-600 font-semibold px-6 py-3 rounded-full shadow hover:bg-white/90">Lihat Katalog Publik</a>
+                    <a href="{{ route('sellers.register') }}" class="border border-white/70 text-white font-semibold px-6 py-3 rounded-full hover:bg-white/10">Daftarkan Toko Anda</a>
                 </div>
             </div>
         </header>
 
-        <section id="features" class="max-w-6xl mx-auto px-4 py-16 space-y-10">
-            <div class="text-center space-y-3">
-                <h2 class="text-3xl font-semibold">Fitur Utama MartPlace</h2>
+        <section id="features" class="max-w-6xl mx-auto px-4 py-14 space-y-10">
+            <div class="text-center space-y-4">
+                <h2 class="text-3xl font-semibold text-purple-900">Mengapa Sellora?</h2>
                 <p class="text-slate-600 max-w-3xl mx-auto">
-                    Kami membantu marketplace menumbuhkan penjual, menjaga kualitas administrasi, mengelola inventori, dan memahami perilaku pengunjung melalui insight visual yang mudah dipahami.
+                    Kami menyiapkan alur khusus penjual: mulai dari registrasi toko, unggah produk, hingga alat analitik yang memudahkan Anda menjaga performa penjualan.
                 </p>
             </div>
             <div class="grid md:grid-cols-3 gap-6">
                 <div class="bg-white rounded-2xl shadow-sm p-6 border border-slate-100">
-                    <p class="text-xs font-semibold uppercase tracking-widest text-indigo-500 mb-2">Onboarding</p>
-                    <h3 class="text-xl font-semibold mb-2">Alur Penjual Terpadu</h3>
+                    <p class="text-xs font-semibold uppercase tracking-widest text-purple-500 mb-2">Onboarding</p>
+                    <h3 class="text-xl font-semibold mb-2">Registrasi Penjual Terpadu</h3>
                     <p class="text-sm text-slate-600">
-                        Form registrasi lengkap, unggah dokumen, dashboard verifikasi admin, notifikasi hasil, hingga pembuatan password penjual.
+                        Formulir lengkap yang memandu penjual hingga akun aktif: unggah dokumen, notifikasi email otomatis, dan pembuatan password sekali klik.
                     </p>
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm p-6 border border-slate-100">
-                    <p class="text-xs font-semibold uppercase tracking-widest text-emerald-500 mb-2">Inventori</p>
-                    <h3 class="text-xl font-semibold mb-2">Kelola Kategori & Produk</h3>
+                    <p class="text-xs font-semibold uppercase tracking-widest text-purple-500 mb-2">Inventori</p>
+                    <h3 class="text-xl font-semibold mb-2">Katalog Produk Real-time</h3>
                     <p class="text-sm text-slate-600">
-                        Upload produk dengan foto, stok, harga; CRUD kategori; relasi ke penjual untuk memudahkan laporan stok dan sebaran.
+                        Penjual dapat menyalakan/menonaktifkan produk dan secara otomatis tampil di landing page beserta ulasan terbaru sebagai bukti kredibilitas toko.
                     </p>
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm p-6 border border-slate-100">
-                    <p class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-2">Insight Visual</p>
-                    <h3 class="text-xl font-semibold mb-2">Dashboard Grafis</h3>
+                    <p class="text-xs font-semibold uppercase tracking-widest text-purple-500 mb-2">Insight</p>
+                    <h3 class="text-xl font-semibold mb-2">Dashboard Analitik</h3>
                     <p class="text-sm text-slate-600">
-                        Chart interaktif tentang sebaran produk, lokasi toko, status penjual, performa rating, serta daerah asal reviewer.
+                        Grafik stok, performa rating, dan lokasi reviewer membantu penjual menyusun strategi stok serta promosi yang lebih tepat sasaran.
                     </p>
                 </div>
             </div>
         </section>
 
-        <section id="dashboards" class="bg-slate-900 text-white">
-            <div class="max-w-5xl mx-auto px-4 py-16 space-y-10 text-center">
-                <p class="text-xs uppercase tracking-[0.4em] text-emerald-300">Insight Penjual</p>
-                <h2 class="text-3xl font-semibold">Dashboard Penjual</h2>
-                <p class="text-slate-300 max-w-3xl mx-auto">
-                    Setiap penjual memperoleh insight masing-masing: grafik stok, nilai rating per produk, dan sebaran pemberi rating per provinsi untuk memantau kinerja toko.
-                </p>
-                <ul class="space-y-2 text-slate-200 text-sm">
-                    <li>• Bar chart stok per produk.</li>
-                    <li>• Kombinasi bar+line rata-rata rating & jumlah review.</li>
-                    <li>• Doughnut chart domisili pemberi rating.</li>
-                    <li>• Dropdown untuk berpindah antar penjual.</li>
-                </ul>
-                <p class="text-sm text-slate-400">Contoh URL: <code class="bg-slate-800 text-emerald-300 px-2 py-1 rounded">/seller/1/dashboard</code></p>
+        <section id="catalog" class="bg-purple-50 border-y border-purple-100">
+            <div class="max-w-6xl mx-auto px-4 py-16 space-y-8">
+                <div class="text-center space-y-3">
+                    <h2 class="text-3xl font-semibold text-purple-900">Produk Unggulan Penjual Sellora</h2>
+                    <p class="text-slate-600 max-w-3xl mx-auto">
+                        Setiap produk yang Anda kelola di dashboard otomatis tampil ke publik, lengkap dengan ringkasan toko, rating rata-rata, dan komentar pembeli.
+                    </p>
+                </div>
+                @if ($products->isEmpty())
+                    <div class="bg-white border border-dashed border-purple-200 rounded-2xl p-10 text-center space-y-3">
+                        <p class="text-xl font-semibold text-slate-700">Belum ada produk yang ditayangkan.</p>
+                        <p class="text-slate-500 text-sm">Tambahkan produk aktif agar langsung muncul pada landing page dan katalog publik.</p>
+                    </div>
+                @else
+                    <div class="grid gap-6 md:grid-cols-2">
+                        @foreach ($products as $product)
+                            <article class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
+                                <div class="h-48 bg-slate-100">
+                                    @if ($product->image_path)
+                                        <img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center text-sm text-slate-400">
+                                            Tidak ada foto
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="p-6 flex-1 flex flex-col gap-4">
+                                    <div class="space-y-1">
+                                        <p class="text-xs uppercase tracking-widest text-indigo-500">{{ $product->category->name ?? 'Kategori belum ditentukan' }}</p>
+                                        <h3 class="text-2xl font-semibold text-slate-900">{{ $product->name }}</h3>
+                                        @if ($product->description)
+                                            <p class="text-sm text-slate-600">{{ Str::limit($product->description, 150) }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+                                        <span class="font-semibold text-slate-800">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                        <span>Stok: {{ $product->stock }}</span>
+                                        <span>Toko: {{ $product->seller->store_name ?? '-' }}</span>
+                                    </div>
+                                    <div class="border border-purple-100 rounded-xl bg-white/70 p-4 space-y-3">
+                                        @php
+                                            $avgRating = $product->reviews_avg_rating ? round($product->reviews_avg_rating, 1) : 0;
+                                        @endphp
+                                        <div class="flex items-center gap-3 text-amber-500 font-semibold text-lg">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 0 0-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 0 0 .95-.69l1.07-3.292Z" />
+                                            </svg>
+                                            <span>{{ number_format($avgRating, 1) }}/5</span>
+                                            <span class="text-xs text-slate-500 font-normal">{{ $product->reviews_count }} ulasan</span>
+                                        </div>
+                                        <div class="space-y-3">
+                                            @forelse ($product->reviews as $review)
+                                                <div class="bg-white rounded-lg p-3 border border-slate-100 text-sm">
+                                                    <div class="flex items-center justify-between">
+                                                        <p class="font-semibold text-slate-800">{{ $review->reviewer_name }}</p>
+                                                        <span class="text-xs text-slate-400">{{ $review->province }}</span>
+                                                    </div>
+                                                    <p class="text-xs text-amber-500 font-semibold mt-1">Rating: {{ $review->rating }}/5</p>
+                                                    @if ($review->comment)
+                                                        <p class="text-slate-600 mt-1">{{ $review->comment }}</p>
+                                                    @endif
+                                                </div>
+                                            @empty
+                                                <p class="text-sm text-slate-500">Belum ada komentar untuk produk ini.</p>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                    <div class="text-center">
+                        <a href="{{ route('catalog.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800">
+                            Lihat semua produk
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 10a.75.75 0 0 1 .75-.75h7.19l-2.22-2.22a.75.75 0 1 1 1.06-1.06l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.75.75 0 1 1-1.06-1.06l2.22-2.22H5.75A.75.75 0 0 1 5 10Z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                @endif
             </div>
         </section>
 
         <section id="cta" class="max-w-5xl mx-auto px-4 py-16 text-center space-y-6">
-            <h2 class="text-3xl font-semibold">Siap Memulai?</h2>
+            <h2 class="text-3xl font-semibold text-purple-900">Siap Berjualan di Sellora?</h2>
             <p class="text-slate-600">
-                Daftarkan penjual baru atau kelola katalog produk Anda. Insight performa toko akan langsung muncul di dashboard penjual.
+                Aktifkan toko Anda, kelola katalog, dan pantau feedback pelanggan tanpa berpindah platform.
             </p>
             <div class="flex flex-wrap justify-center gap-3 text-sm">
-                <a href="{{ route('sellers.register') }}" class="bg-indigo-600 text-white px-5 py-3 rounded-lg hover:bg-indigo-700">Registrasi Penjual Baru</a>
-                <a href="{{ route('products.index') }}" class="px-5 py-3 rounded-lg border border-indigo-200 text-indigo-700 hover:border-indigo-400">Kelola Produk</a>
+                <a href="{{ route('sellers.register') }}" class="bg-purple-600 text-white px-5 py-3 rounded-lg hover:bg-purple-700 font-semibold">Daftarkan Toko</a>
+                <a href="{{ route('seller.login') }}" class="px-5 py-3 rounded-lg border border-purple-200 text-purple-700 hover:border-purple-400 font-semibold">Masuk sebagai Penjual</a>
             </div>
         </section>
 
         <footer class="bg-white border-t border-slate-100">
             <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-slate-500 flex flex-wrap justify-between gap-3">
-                <span>© {{ date('Y') }} MartPlace Platform</span>
+                <span>© {{ date('Y') }} Sellora Platform</span>
                 <div class="flex gap-4">
                     <a href="{{ route('admin.login') }}" class="hover:text-slate-900">Login Admin Verifikasi</a>
                     <a href="{{ route('products.index') }}" class="hover:text-slate-900">Kategori & Produk</a>

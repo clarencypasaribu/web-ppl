@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminSessionController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PlatformDashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerAuthController;
@@ -11,7 +12,7 @@ use App\Http\Controllers\SellerDashboardController;
 use App\Http\Controllers\SellerPasswordController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'home')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::controller(SellerController::class)->group(function () {
     Route::get('/seller/register', 'create')->name('sellers.register');
@@ -32,8 +33,12 @@ Route::get('/platform/dashboard', [PlatformDashboardController::class, 'index'])
 Route::get('/seller/{seller}/dashboard', [SellerDashboardController::class, 'show'])->name('dashboard.seller');
 Route::get('/seller/home', [SellerDashboardController::class, 'home'])->name('seller.home');
 
-Route::resource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
-Route::resource('products', ProductController::class)->except(['show']);
+Route::resource('products', ProductController::class)->only(['index']);
+
+Route::middleware('seller.auth')->group(function () {
+    Route::resource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+    Route::resource('products', ProductController::class)->except(['index', 'show']);
+});
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
 

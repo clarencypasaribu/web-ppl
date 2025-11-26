@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Penjual - MartPlace')
+@section('title', 'Dashboard Penjual - Sellora')
 
 @section('content')
     @php
@@ -18,7 +18,7 @@
         <header class="space-y-3">
             <div class="flex flex-wrap justify-between items-start gap-4">
                 <div>
-                    <h1 class="text-3xl font-semibold">Dashboard Penjual (SRS-MartPlace-08)</h1>
+                    <h1 class="text-3xl font-semibold">Dashboard Penjual (SRS-Sellora-08)</h1>
                     <p class="text-sm text-slate-600">
                         Monitor stok produk, nilai rating, serta lokasi pemberi rating untuk toko pilihan.
                     </p>
