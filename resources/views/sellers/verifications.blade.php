@@ -9,7 +9,6 @@
     <div class="max-w-6xl mx-auto px-4 py-10">
         <header class="mb-6 flex items-center justify-between flex-wrap gap-4">
             <div>
-                <p class="text-xs uppercase tracking-[0.4em] text-slate-500 font-semibold">Admin Only</p>
                 <h1 class="text-3xl font-semibold">Dashboard Verifikasi</h1>
                 <p class="text-sm text-slate-600 mt-1">
                     Cek kelengkapan administrasi calon penjual. Kirimkan hasil verifikasi agar notifikasi email (diterima/ditolak) langsung diterima PIC.
