@@ -1,12 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Katalog Produk - MartPlace')
+@section('title', 'Manajemen Katalog Produk - Sellora')
 
 @section('content')
     @php
         use Illuminate\Support\Facades\Storage;
         use Illuminate\Support\Str;
         $activeFilters = array_filter($filters, fn ($value) => filled($value));
+        $isSellerLoggedIn = session()->has('seller_auth_id');
     @endphp
     <div class="max-w-6xl mx-auto px-4 py-10 space-y-6">
         <header class="space-y-4">
@@ -14,12 +15,16 @@
                 <div>
                     <h1 class="text-3xl font-semibold">Manajemen Katalog Produk & Kategori</h1>
                     <p class="text-sm text-slate-600">
-                        Memenuhi SRS-MartPlace-04/05 dengan mengelola kategori, produk, serta pencarian berdasarkan nama toko, kategori, dan lokasi.
+                        Memenuhi SRS-Sellora-04/05 dengan mengelola kategori, produk, serta pencarian berdasarkan nama toko, kategori, dan lokasi.
                     </p>
                 </div>
                 <div class="flex gap-3 text-sm">
                     <a href="{{ route('catalog.index') }}" class="text-indigo-600 hover:text-indigo-800">Lihat Katalog Publik</a>
-                    <a href="{{ route('products.create') }}" class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Tambah Produk</a>
+                    @if ($isSellerLoggedIn)
+                        <a href="{{ route('products.create') }}" class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Tambah Produk</a>
+                    @else
+                        <a href="{{ route('seller.login') }}" class="inline-flex items-center bg-slate-200 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-300">Login untuk Mengelola</a>
+                    @endif
                 </div>
             </div>
         </header>
@@ -53,7 +58,8 @@
         @endif
 
         <div class="grid gap-6 lg:grid-cols-3">
-            <section class="bg-white rounded-2xl shadow border border-slate-100 p-5 space-y-4">
+            @if ($isSellerLoggedIn)
+                <section class="bg-white rounded-2xl shadow border border-slate-100 p-5 space-y-4">
                 <header>
                     <p class="text-xs uppercase tracking-[0.4em] text-indigo-500 font-semibold">Kategori</p>
                     <h2 class="text-xl font-semibold">Daftar Kategori Produk</h2>
@@ -130,7 +136,14 @@
                         </form>
                     @endif
                 </div>
-            </section>
+                </section>
+            @else
+                <section class="bg-white rounded-2xl shadow border border-slate-100 p-6 space-y-4">
+                    <h2 class="text-xl font-semibold">Hanya Penjual Terverifikasi</h2>
+                    <p class="text-sm text-slate-600">Masuk ke akun penjual untuk menambah kategori dan mengelola katalog Anda.</p>
+                    <a href="{{ route('seller.login') }}" class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm font-semibold">Login Penjual</a>
+                </section>
+            @endif
 
             <section class="lg:col-span-2 space-y-4">
                 <form action="{{ route('products.index') }}" method="GET" class="bg-white border border-slate-200 rounded-2xl p-5 shadow flex flex-wrap gap-4">
@@ -228,14 +241,18 @@
                                         @endif
                                     </td>
                                     <td class="px-4 py-3">
-                                        <div class="flex justify-end gap-3 text-sm">
-                                            <a href="{{ route('products.edit', $product) }}" class="text-indigo-600 hover:text-indigo-800">Ubah</a>
-                                            <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Hapus produk {{ $product->name }}?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-rose-600 hover:text-rose-800">Hapus</button>
-                                            </form>
-                                        </div>
+                                        @if ($isSellerLoggedIn)
+                                            <div class="flex justify-end gap-3 text-sm">
+                                                <a href="{{ route('products.edit', $product) }}" class="text-indigo-600 hover:text-indigo-800">Ubah</a>
+                                                <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Hapus produk {{ $product->name }}?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-rose-600 hover:text-rose-800">Hapus</button>
+                                                </form>
+                                            </div>
+                                        @else
+                                            <p class="text-xs text-slate-400 text-right">Login untuk mengelola</p>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Katalog Produk - MartPlace')
+@section('title', 'Katalog Produk - Sellora')
 
 @section('content')
     @php
@@ -9,10 +9,10 @@
     @endphp
     <div class="max-w-6xl mx-auto px-4 py-10 space-y-10">
         <header class="text-center space-y-4">
-            <p class="text-xs tracking-[0.4em] uppercase text-indigo-500 font-semibold">SRS-MartPlace-04</p>
+            <p class="text-xs tracking-[0.4em] uppercase text-indigo-500 font-semibold">SRS-Sellora-04</p>
             <h1 class="text-4xl font-semibold">Katalog Produk Publik</h1>
             <p class="text-slate-600 max-w-3xl mx-auto">
-                Jelajahi produk unggulan dari berbagai penjual MartPlace. Setiap kartu menampilkan foto produk, kategori,
+                Jelajahi produk unggulan dari berbagai penjual Sellora. Setiap kartu menampilkan foto produk, kategori,
                 ringkasan penjual, serta rating rata-rata dan komentar terbaru dari pengunjung.
             </p>
             <div class="flex flex-wrap gap-3 justify-center text-sm">

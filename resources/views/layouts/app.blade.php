@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'MartPlace Platform')</title>
+    <title>@yield('title', 'Sellora Platform')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     @stack('head')
 </head>
@@ -20,7 +20,7 @@
         <aside id="app-sidebar" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-100 shadow-xl transform -translate-x-full transition-transform duration-200 z-30 flex flex-col">
             <div class="px-6 py-6 border-b border-slate-100 flex items-center justify-between">
                 <div>
-                    <p class="text-xs tracking-[0.4em] uppercase text-indigo-500 font-semibold">MartPlace</p>
+                    <p class="text-xs tracking-[0.4em] uppercase text-indigo-500 font-semibold">Sellora</p>
                     <h2 class="text-2xl font-semibold mt-2">Navigation</h2>
                 </div>
                 <button id="sidebarClose" class="text-slate-400 hover:text-slate-900">
@@ -46,7 +46,7 @@
                     <span class="text-sm font-medium">Menu</span>
                 </button>
                 <div class="flex items-center gap-3 text-sm">
-                    <span class="text-slate-500">MartPlace Platform</span>
+                    <span class="text-slate-500">Sellora Platform</span>
                     <a href="{{ route('home') }}" class="text-indigo-600 hover:text-indigo-800">Home</a>
                 </div>
             </header>

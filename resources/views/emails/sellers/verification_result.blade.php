@@ -2,7 +2,7 @@
 # Halo {{ $seller->pic_name }},
 
 @if ($seller->status === \App\Models\Seller::STATUS_APPROVED)
-Selamat! Pengajuan toko **{{ $seller->store_name }}** telah *disetujui* oleh tim MartPlace. Silakan buat password terlebih dahulu kemudian login ke dashboard penjual.
+Selamat! Pengajuan toko **{{ $seller->store_name }}** telah *disetujui* oleh tim Sellora. Silakan buat password terlebih dahulu kemudian login ke dashboard penjual.
 
 <x-mail::panel>
 Email PIC: {{ $seller->pic_email }}  
