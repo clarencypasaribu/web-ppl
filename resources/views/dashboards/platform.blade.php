@@ -15,13 +15,7 @@
     <div class="max-w-6xl mx-auto px-4 py-10 space-y-6">
         <header class="flex flex-wrap justify-between items-center gap-4">
             <div>
-                <h1 class="text-3xl font-semibold">Dashboard Platform (SRS-MartPlace-07)</h1>
-                <p class="text-sm text-slate-600">Visualisasi sebaran produk, toko, status penjual, serta partisipasi pengunjung.</p>
-            </div>
-            <div class="text-sm space-y-1">
-                <a href="{{ route('products.index') }}" class="block text-indigo-600 hover:text-indigo-800">Kelola Kategori & Produk →</a>
-                <a href="{{ route('admin.login') }}" class="block text-indigo-600 hover:text-indigo-800">Login Admin Verifikasi →</a>
-            </div>
+                <h1 class="text-3xl font-semibold">Dashboard Platform</h1>
         </header>
 
         <section class="grid md:grid-cols-3 gap-4">
