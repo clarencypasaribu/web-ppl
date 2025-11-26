@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'admin' => [
+        'verification_passcode' => env('ADMIN_VERIFICATION_PASSCODE', 'martplace-admin'),
+    ],
+
 ];
