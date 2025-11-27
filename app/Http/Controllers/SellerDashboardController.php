@@ -51,6 +51,17 @@ class SellerDashboardController extends Controller
             ->orderBy('province')
             ->get();
 
+        $categoriesCount = $seller->products()
+            ->distinct('category_id')
+            ->count('category_id');
+
+        $recentReviewsByProduct = $seller->products()
+            ->with(['reviews' => function ($query) {
+                $query->latest()->limit(3);
+            }])
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         $allSellers = Seller::orderBy('store_name')->get();
 
         return view('dashboards.seller', compact(
@@ -58,7 +69,9 @@ class SellerDashboardController extends Controller
             'allSellers',
             'productStocks',
             'productsWithAvgRating',
-            'ratingsByProvince'
+            'ratingsByProvince',
+            'categoriesCount',
+            'recentReviewsByProduct'
         ));
     }
 }

@@ -23,31 +23,10 @@
                         <h1 class="text-3xl font-semibold text-purple-900">Dashboard Penjual</h1>
                         <p class="text-sm text-slate-600">
                             Monitor stok, performa rating, serta wilayah pelanggan untuk toko pilihan Anda.
-                            <a href="{{ route('profile.show', $seller) }}" class="text-purple-600 hover:text-purple-800 underline ml-2">Lihat profil lengkap</a>
                         </p>
                     </div>
                     @if ($loggedSellerId === $seller->id)
-                        <form action="{{ route('seller.logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="text-sm text-rose-600 hover:text-rose-800">Keluar</button>
-                        </form>
                     @endif
-                </div>
-                <div class="flex flex-wrap gap-3 items-center">
-                    <label for="sellerSwitcher" class="text-sm font-medium text-purple-800">Pilih toko:</label>
-                    <select id="sellerSwitcher" class="border-purple-200 focus:border-purple-400 focus:ring-purple-400 rounded-lg text-sm py-2">
-                        @foreach ($allSellers as $sellerOption)
-                            <option value="{{ route('dashboard.seller', $sellerOption) }}" @selected($sellerOption->id === $seller->id)>
-                                {{ $sellerOption->store_name }} ({{ ucfirst($sellerOption->status) }})
-                            </option>
-                        @endforeach
-                    </select>
-                    <a href="{{ route('products.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800">
-                        Kelola Produk
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5 10a.75.75 0 0 1 .75-.75h7.19l-2.22-2.22a.75.75 0 1 1 1.06-1.06l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.75.75 0 1 1-1.06-1.06l2.22-2.22H5.75A.75.75 0 0 1 5 10Z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
                 </div>
             </header>
 
@@ -57,18 +36,18 @@
                 </div>
             @endif
 
-            <section class="grid md:grid-cols-3 gap-4">
+            <section class="grid md:grid-cols-4 gap-4">
                 <div class="bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
                     <p class="text-sm text-slate-500">Total Produk</p>
                     <p class="text-3xl font-semibold mt-2 text-purple-900">{{ $productStocks->count() }}</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
-                    <p class="text-sm text-slate-500">Total Stok</p>
-                    <p class="text-3xl font-semibold mt-2 text-purple-900">{{ $productStockValues->sum() }}</p>
+                    <p class="text-sm text-slate-500">Jumlah Rating</p>
+                    <p class="text-3xl font-semibold mt-2 text-purple-900">{{ $ratingCounts->sum() }}</p>
                 </div>
                 <div class="bg-white rounded-2xl border border-purple-100 shadow-sm p-6">
-                    <p class="text-sm text-slate-500">Jumlah Review</p>
-                    <p class="text-3xl font-semibold mt-2 text-purple-900">{{ $ratingCounts->sum() }}</p>
+                    <p class="text-sm text-slate-500">Jumlah Kategori</p>
+                    <p class="text-3xl font-semibold mt-2 text-purple-900">{{ $categoriesCount }}</p>
                 </div>
             </section>
 
@@ -104,6 +83,40 @@
                     <canvas id="ratingProvinceChart" height="260"></canvas>
                 </div>
             </section>
+
+            <section class="bg-white rounded-3xl border border-purple-100 shadow p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-lg font-semibold text-purple-900">Komentar Terbaru per Produk</h2>
+                        <p class="text-xs text-slate-500">Pantau masukan pembeli untuk tiap produk.</p>
+                    </div>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    @forelse ($recentReviewsByProduct as $product)
+                        <div class="py-4">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-sm font-semibold text-purple-900">{{ $product->name }}</h3>
+                                <span class="text-xs text-slate-500">{{ $product->reviews->count() }} komentar terbaru</span>
+                            </div>
+                            <ul class="mt-2 space-y-2">
+                                @forelse ($product->reviews as $review)
+                                    <li class="text-sm text-slate-700 bg-slate-50 border border-slate-100 rounded-lg p-3">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <span class="font-semibold text-slate-900">{{ $review->reviewer_name }}</span>
+                                            <span class="text-xs text-amber-600">Rating: {{ $review->rating }}/5</span>
+                                        </div>
+                                        <p class="text-sm text-slate-600">{{ $review->comment ?: 'Tidak ada komentar tertulis.' }}</p>
+                                    </li>
+                                @empty
+                                    <li class="text-sm text-slate-500">Belum ada komentar.</li>
+                                @endforelse
+                            </ul>
+                        </div>
+                    @empty
+                        <p class="text-sm text-slate-500">Belum ada produk.</p>
+                    @endforelse
+                </div>
+            </section>
         </div>
     </div>
 @endsection
@@ -112,16 +125,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const switcher = document.getElementById('sellerSwitcher');
-            if (switcher) {
-                switcher.addEventListener('change', (event) => {
-                    const targetUrl = event.target.value;
-                    if (targetUrl) {
-                        window.location.href = targetUrl;
-                    }
-                });
-            }
-
             const stockCtx = document.getElementById('productStockChart');
             if (stockCtx) {
                 new Chart(stockCtx, {
@@ -153,14 +156,6 @@
                             label: 'Rata-rata Rating',
                             data: @json($ratingValues),
                             backgroundColor: '#f59e0b'
-                        }, {
-                            type: 'line',
-                            label: 'Jumlah Review',
-                            data: @json($ratingCounts),
-                            borderColor: '#10b981',
-                            borderWidth: 2,
-                            fill: false,
-                            yAxisID: 'y1'
                         }]
                     },
                     options: {

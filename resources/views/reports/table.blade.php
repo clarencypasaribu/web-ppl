@@ -1,8 +1,9 @@
 @php
     $emptyText = $emptyText ?? 'Belum ada data.';
+    $containerClass = $containerClass ?? 'bg-white rounded-2xl border border-purple-100 shadow-sm overflow-hidden';
 @endphp
 
-<div class="bg-white rounded-2xl border border-purple-100 shadow-sm overflow-hidden">
+<div class="{{ $containerClass }}">
     <table class="min-w-full divide-y divide-slate-100 text-sm">
         <thead class="bg-slate-50 uppercase text-xs tracking-wide text-slate-500">
             <tr>

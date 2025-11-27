@@ -15,12 +15,8 @@
     <div class="max-w-6xl mx-auto px-4 py-10 space-y-6">
         <header class="flex flex-wrap justify-between items-center gap-4">
             <div>
-                <h1 class="text-3xl font-semibold">Dashboard Platform (SRS-Sellora-07)</h1>
+                <h1 class="text-3xl font-semibold">Dashboard Platform</h1>
                 <p class="text-sm text-slate-600">Visualisasi sebaran produk, toko, status penjual, serta partisipasi pengunjung.</p>
-            </div>
-            <div class="text-sm space-y-1">
-                <a href="{{ route('products.index') }}" class="block text-indigo-600 hover:text-indigo-800">Kelola Kategori & Produk →</a>
-                <a href="{{ route('admin.login') }}" class="block text-indigo-600 hover:text-indigo-800">Login Admin Verifikasi →</a>
             </div>
         </header>
 
@@ -38,7 +34,6 @@
             <div class="bg-white rounded-xl shadow p-5">
                 <p class="text-sm text-slate-500">Pengunjung Memberi Rating & Komentar</p>
                 <p class="text-3xl font-semibold mt-2">{{ $reviewsCount }}</p>
-                <p class="text-xs text-slate-500 mt-1">Total entri di tabel product_reviews</p>
             </div>
         </section>
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminSessionController;
+use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SellerAuthController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SellerDashboardController;
+use App\Http\Controllers\SellerProfileController;
 use App\Http\Controllers\SellerPasswordController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +22,7 @@ Route::controller(SellerController::class)->group(function () {
 });
 
 Route::middleware('admin.access')->group(function () {
+    Route::get('/admin/profile', [\App\Http\Controllers\AdminProfileController::class, 'show'])->name('admin.profile');
     Route::get('/seller/verifications', [SellerController::class, 'verificationIndex'])->name('sellers.verifications');
     Route::post('/seller/{seller}/verify', [SellerController::class, 'verify'])->name('sellers.verify');
 });
@@ -36,13 +39,16 @@ Route::get('/seller/home', [SellerDashboardController::class, 'home'])->name('se
 Route::resource('products', ProductController::class)->only(['index']);
 
 Route::middleware('seller.auth')->group(function () {
+    Route::get('/seller/profile', [SellerProfileController::class, 'me'])->name('seller.profile');
     Route::resource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
     Route::resource('products', ProductController::class)->except(['index', 'show']);
 });
 
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog.index');
-Route::get('/alerts', \App\Http\Controllers\AlertController::class)->name('alerts.orders');
+Route::get('/catalog/{product}', [CatalogController::class, 'show'])->name('catalog.show');
+Route::post('/catalog/{product}/reviews', [CatalogController::class, 'storeReview'])->name('catalog.reviews.store');
 Route::get('/reports/seller', [\App\Http\Controllers\SellerReportController::class, 'index'])->name('reports.seller');
+Route::get('/reports/platform', [\App\Http\Controllers\PlatformReportController::class, 'index'])->name('reports.platform');
 Route::get('/profile/{seller}', [\App\Http\Controllers\SellerProfileController::class, 'show'])->name('profile.show');
 
 Route::get('/seller/login', [SellerAuthController::class, 'create'])->name('seller.login');

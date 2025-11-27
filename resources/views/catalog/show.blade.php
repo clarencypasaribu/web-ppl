@@ -46,9 +46,6 @@
                         <p class="text-xs uppercase tracking-widest text-indigo-500">{{ $product->category->name ?? 'Kategori belum ditentukan' }}</p>
                         <h1 class="text-3xl font-semibold">{{ $product->name }}</h1>
                     </div>
-                    <button id="copyLinkBtn" class="text-sm px-3 py-2 rounded-md border border-slate-200 text-slate-700 hover:bg-slate-50">
-                        Salin tautan
-                    </button>
                 </div>
                 <p class="text-3xl font-semibold text-slate-800">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
                 <p class="text-sm text-slate-700 leading-relaxed">{{ $product->description ?? 'Belum ada deskripsi produk.' }}</p>

@@ -19,14 +19,17 @@
                     <span class="sr-only">Sellora</span>
                 </a>
                 <div class="flex-1 flex items-center gap-6 min-w-full md:min-w-[55%]">
-                    <div class="flex-1">
+                    <form action="{{ route('catalog.index') }}" method="GET" class="flex-1 relative">
                         <div class="flex items-center gap-2 bg-slate-100 rounded-full px-4 py-2 ring-1 ring-purple-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-500" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 3.473 9.745l3.64 3.64a.75.75 0 1 0 1.06-1.06l-3.64-3.64A5.5 5.5 0 0 0 9 3.5Zm-4 5.5a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" clip-rule="evenodd" />
                             </svg>
-                            <input type="text" placeholder="Cari produk..." class="bg-transparent flex-1 text-sm text-slate-600 placeholder:text-slate-400 focus:outline-none">
+                            <input type="text" name="q" id="homeSearch" value="{{ request('q') }}" placeholder="Cari produk, toko, kategori, lokasi..." class="bg-transparent flex-1 text-sm text-slate-600 placeholder:text-slate-400 focus:outline-none" autocomplete="off">
                         </div>
-                    </div>
+                        <div id="homeSearchHistory" class="hidden absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-lg text-sm text-slate-700 max-h-48 overflow-y-auto z-10">
+                            <!-- history injected by JS -->
+                        </div>
+                    </form>
                     <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
                         <a href="#catalog" class="hover:text-slate-900">Katalog</a>
                         <a href="#features" class="hover:text-slate-900">Fitur</a>
@@ -112,58 +115,73 @@
                         <p class="text-slate-500 text-sm">Tambahkan produk aktif agar langsung muncul pada landing page dan katalog publik.</p>
                     </div>
                 @else
-                    <div class="grid gap-6 md:grid-cols-2">
+                    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
                         @foreach ($products as $product)
-                            <article class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-                                <div class="h-48 bg-slate-100">
+                            @php
+                                $avgRating = round($product->reviews_avg_rating ?? 0, 1);
+                                $highlightReview = $product->reviews->first();
+                            @endphp
+                            <article class="relative bg-white rounded-2xl shadow-sm border border-slate-200/70 overflow-hidden flex flex-col h-full transition transform hover:-translate-y-1 hover:shadow-lg">
+                                <div class="h-44 bg-slate-100 overflow-hidden relative">
                                     @if ($product->image_path)
-                                        <img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                        <img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition duration-300 hover:scale-105">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-sm text-slate-400">
                                             Tidak ada foto
                                         </div>
                                     @endif
+                                    <div class="absolute top-3 left-3 inline-flex items-center rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-indigo-600 shadow-sm border border-indigo-100">
+                                        {{ $product->category->name ?? 'Kategori belum ditentukan' }}
+                                    </div>
+                                    <div class="absolute top-3 right-3 inline-flex items-center gap-1 rounded-full bg-slate-900/80 text-white px-3 py-1 text-xs font-semibold shadow-sm">
+                                        <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 0 0-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 0 0 .95-.69l1.07-3.292Z" />
+                                        </svg>
+                                        <span>{{ number_format($avgRating, 1) }}</span>
+                                    </div>
                                 </div>
-                                <div class="p-6 flex-1 flex flex-col gap-4">
-                                    <div class="space-y-1">
-                                        <p class="text-xs uppercase tracking-widest text-indigo-500">{{ $product->category->name ?? 'Kategori belum ditentukan' }}</p>
-                                        <h3 class="text-2xl font-semibold text-slate-900">{{ $product->name }}</h3>
+                                <div class="p-5 flex-1 flex flex-col gap-4">
+                                    <div class="space-y-2">
+                                        <h3 class="text-lg font-semibold text-slate-900">{{ $product->name }}</h3>
                                         @if ($product->description)
-                                            <p class="text-sm text-slate-600">{{ Str::limit($product->description, 150) }}</p>
+                                            <p class="text-sm text-slate-600">{{ Str::limit($product->description, 120) }}</p>
                                         @endif
                                     </div>
-                                    <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
-                                        <span class="font-semibold text-slate-800">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                                        <span>Stok: {{ $product->stock }}</span>
-                                        <span>Toko: {{ $product->seller->store_name ?? '-' }}</span>
+                                    <div class="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-800">
+                                            Rp {{ number_format($product->price, 0, ',', '.') }}
+                                        </span>
+                                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 px-3 py-1">
+                                            Stok {{ $product->stock }}
+                                        </span>
+                                        <span class="inline-flex items-center gap-1 text-indigo-600 font-medium">
+                                            {{ $product->seller->store_name ?? '-' }}
+                                        </span>
+                                        <span class="text-xs text-slate-400">{{ $product->reviews_count }} ulasan</span>
                                     </div>
-                                    <div class="border border-purple-100 rounded-xl bg-white/70 p-4 space-y-3">
-                                        @php
-                                            $avgRating = $product->reviews_avg_rating ? round($product->reviews_avg_rating, 1) : 0;
-                                        @endphp
-                                        <div class="flex items-center gap-3 text-amber-500 font-semibold text-lg">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 0 0-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 0 0 .95-.69l1.07-3.292Z" />
-                                            </svg>
-                                            <span>{{ number_format($avgRating, 1) }}/5</span>
-                                            <span class="text-xs text-slate-500 font-normal">{{ $product->reviews_count }} ulasan</span>
+                                    <div class="border border-slate-100 rounded-xl p-4 bg-slate-50 flex flex-col gap-3">
+                                        <div class="flex items-center gap-2">
+                                            <div class="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-sm font-semibold text-amber-600 border border-amber-100">
+                                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 0 0-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 0 0 .95-.69l1.07-3.292Z" />
+                                                </svg>
+                                                {{ number_format($avgRating, 1) }}/5
+                                            </div>
+                                            <p class="text-sm text-slate-600">Rating rata-rata</p>
                                         </div>
-                                        <div class="space-y-3">
-                                            @forelse ($product->reviews as $review)
-                                                <div class="bg-white rounded-lg p-3 border border-slate-100 text-sm">
-                                                    <div class="flex items-center justify-between">
-                                                        <p class="font-semibold text-slate-800">{{ $review->reviewer_name }}</p>
-                                                        <span class="text-xs text-slate-400">{{ $review->province }}</span>
-                                                    </div>
-                                                    <p class="text-xs text-amber-500 font-semibold mt-1">Rating: {{ $review->rating }}/5</p>
-                                                    @if ($review->comment)
-                                                        <p class="text-slate-600 mt-1">{{ $review->comment }}</p>
-                                                    @endif
+                                        @if ($highlightReview)
+                                            <div class="bg-white border border-slate-100 rounded-lg p-3 text-sm shadow-[0_1px_0_rgba(15,23,42,0.03)]">
+                                                <div class="flex items-center justify-between">
+                                                    <p class="font-semibold text-slate-700">{{ $highlightReview->reviewer_name }}</p>
+                                                    <span class="text-xs text-slate-400">{{ $highlightReview->province }}</span>
                                                 </div>
-                                            @empty
-                                                <p class="text-sm text-slate-500">Belum ada komentar untuk produk ini.</p>
-                                            @endforelse
-                                        </div>
+                                                @if ($highlightReview->comment)
+                                                    <p class="text-sm text-slate-600 mt-1">{{ Str::limit($highlightReview->comment, 100) }}</p>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <p class="text-sm text-slate-500">Belum ada komentar untuk produk ini.</p>
+                                        @endif
                                     </div>
                                 </div>
                             </article>
@@ -205,6 +223,9 @@
     <script>
         const dropdownBtn = document.getElementById('headerDropdownBtn');
         const dropdownMenu = document.getElementById('headerDropdownMenu');
+        const homeSearch = document.getElementById('homeSearch');
+        const homeSearchHistory = document.getElementById('homeSearchHistory');
+        const HOME_SEARCH_HISTORY_KEY = 'sellora_search_history';
 
         dropdownBtn?.addEventListener('click', () => {
             dropdownMenu?.classList.toggle('hidden');
@@ -214,6 +235,85 @@
             if (!dropdownBtn?.contains(event.target) && !dropdownMenu?.contains(event.target)) {
                 dropdownMenu?.classList.add('hidden');
             }
+            if (!homeSearch?.contains(event.target) && !homeSearchHistory?.contains(event.target)) {
+                homeSearchHistory?.classList.add('hidden');
+            }
+        });
+
+        function getHomeHistory() {
+            try {
+                const raw = localStorage.getItem(HOME_SEARCH_HISTORY_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveHomeHistory(term) {
+            const clean = (term || '').trim();
+            if (!clean) return;
+            const list = getHomeHistory().filter((item) => item.toLowerCase() !== clean.toLowerCase());
+            list.unshift(clean);
+            localStorage.setItem(HOME_SEARCH_HISTORY_KEY, JSON.stringify(list.slice(0, 7)));
+        }
+
+        function renderHomeHistory() {
+            if (!homeSearch || !homeSearchHistory) return;
+            const history = getHomeHistory();
+            if (!history.length) {
+                homeSearchHistory.classList.add('hidden');
+                homeSearchHistory.innerHTML = '';
+                return;
+            }
+
+            const items = history.map((item) => `
+                <div class="flex items-center justify-between px-4 py-2 hover:bg-slate-50">
+                    <button type="button" class="flex-1 text-left" data-home-history-item="${item.replace(/"/g, '&quot;')}">${item}</button>
+                    <button type="button" class="ml-3 text-slate-400 hover:text-rose-500" aria-label="Hapus riwayat" data-home-history-remove="${item.replace(/"/g, '&quot;')}">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 0 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+
+            homeSearchHistory.innerHTML = `
+                <div class="flex items-center justify-between px-4 py-2 text-xs font-semibold text-slate-500 border-b border-slate-100">
+                    <span>Riwayat pencarian</span>
+                    <button type="button" id="homeClearHistoryBtn" class="text-rose-600 hover:text-rose-700">Hapus semua</button>
+                </div>
+                ${items}
+            `;
+            homeSearchHistory.classList.remove('hidden');
+
+            homeSearchHistory.querySelectorAll('[data-home-history-item]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const value = btn.getAttribute('data-home-history-item') || '';
+                    homeSearch.value = value;
+                    homeSearchHistory.classList.add('hidden');
+                    homeSearch.closest('form')?.submit();
+                });
+            });
+
+            homeSearchHistory.querySelectorAll('[data-home-history-remove]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const value = btn.getAttribute('data-home-history-remove') || '';
+                    const updated = getHomeHistory().filter((item) => item.toLowerCase() !== value.toLowerCase());
+                    localStorage.setItem(HOME_SEARCH_HISTORY_KEY, JSON.stringify(updated));
+                    renderHomeHistory();
+                });
+            });
+
+            const clearBtn = homeSearchHistory.querySelector('#homeClearHistoryBtn');
+            clearBtn?.addEventListener('click', () => {
+                localStorage.removeItem(HOME_SEARCH_HISTORY_KEY);
+                renderHomeHistory();
+            });
+        }
+
+        homeSearch?.addEventListener('focus', renderHomeHistory);
+        homeSearch?.closest('form')?.addEventListener('submit', () => {
+            saveHomeHistory(homeSearch.value || '');
         });
     </script>
 </body>
