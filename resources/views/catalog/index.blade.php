@@ -15,11 +15,46 @@
                 ringkasan penjual, serta rating rata-rata dan komentar terbaru dari pengunjung.
             </p>
         </header>
+        <section class="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
+            <form action="{{ route('catalog.index') }}" method="GET" class="flex flex-col md:flex-row gap-3">
+                <div class="flex-1 flex items-center gap-2 bg-slate-50 rounded-xl px-4 py-3 ring-1 ring-slate-200 focus-within:ring-purple-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 3.473 9.745l3.64 3.64a.75.75 0 1 0 1.06-1.06l-3.64-3.64A5.5 5.5 0 0 0 9 3.5Zm-4 5.5a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" clip-rule="evenodd" />
+                    </svg>
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ $search }}"
+                        placeholder="Cari nama produk, nama toko, kategori, lokasi toko..."
+                        class="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
+                    >
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="submit" class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-3 rounded-xl hover:bg-indigo-700 text-sm font-semibold">
+                        Cari
+                    </button>
+                    @if ($search !== '')
+                        <a href="{{ route('catalog.index') }}" class="inline-flex items-center justify-center bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 text-sm font-medium">
+                            Reset
+                        </a>
+                    @endif
+                </div>
+            </form>
+            @if ($search !== '')
+                <p class="mt-3 text-sm text-slate-600">
+                    Menampilkan hasil untuk: <span class="font-semibold text-slate-800">"{{ $search }}"</span>
+                </p>
+            @endif
+        </section>
 
         @if ($products->isEmpty())
             <div class="bg-white rounded-2xl shadow p-10 text-center space-y-3">
-                <p class="text-xl font-semibold">Belum ada produk tersedia</p>
-                <p class="text-slate-500">Segera tambahkan produk melalui panel manajemen agar tampil di katalog publik.</p>
+                <p class="text-xl font-semibold">Produk tidak ditemukan</p>
+                @if ($search !== '')
+                    <p class="text-slate-500">Coba kata kunci lain untuk nama produk, nama toko, kategori, atau lokasi toko.</p>
+                @else
+                    <p class="text-slate-500">Segera tambahkan produk melalui panel manajemen agar tampil di katalog publik.</p>
+                @endif
                 <a href="{{ route('products.create') }}" class="inline-flex items-center bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700">
                     Tambah Produk
                 </a>

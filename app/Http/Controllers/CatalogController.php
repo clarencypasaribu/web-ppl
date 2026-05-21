@@ -37,6 +37,8 @@ class CatalogController extends Controller
                                 })
                                 ->orWhereHas('seller', function ($sellerQuery) use ($term) {
                                     $sellerQuery->where('store_name', 'like', "%{$term}%")
+                                        ->orWhere('street_address', 'like', "%{$term}%")
+                                        ->orWhere('ward_name', 'like', "%{$term}%")
                                         ->orWhere('city', 'like', "%{$term}%")
                                         ->orWhere('province', 'like', "%{$term}%");
                                 });

@@ -147,37 +147,41 @@
             @endif
 
             <section class="lg:col-span-2 space-y-4">
-                <form action="{{ route('products.index') }}" method="GET" class="bg-white border border-slate-200 rounded-2xl p-5 shadow flex flex-wrap gap-4">
-                    <div class="flex-1 min-w-[180px]">
-                        <label class="text-xs font-semibold text-slate-500">Nama Produk</label>
-                        <input type="text" name="q" value="{{ $filters['q'] }}" class="w-full border-slate-300 rounded-lg" placeholder="Nama atau deskripsi produk">
-                    </div>
-                    <div class="flex-1 min-w-[180px]">
-                        <label class="text-xs font-semibold text-slate-500">Nama Toko</label>
-                        <input type="text" name="seller" value="{{ $filters['seller'] }}" class="w-full border-slate-300 rounded-lg" placeholder="Contoh: Alfamidi">
-                    </div>
-                    <div class="flex-1 min-w-[180px]">
-                        <label class="text-xs font-semibold text-slate-500">Kategori</label>
-                        <select name="category_id" class="w-full border-slate-300 rounded-lg">
-                            <option value="">Semua kategori</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" @selected($filters['category_id'] == $category->id)>{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="flex-1 min-w-[180px]">
-                        <label class="text-xs font-semibold text-slate-500">Kota/Kabupaten</label>
-                        <input type="text" name="city" value="{{ $filters['city'] }}" class="w-full border-slate-300 rounded-lg" placeholder="Cari kota toko">
-                    </div>
-                    <div class="flex-1 min-w-[180px]">
-                        <label class="text-xs font-semibold text-slate-500">Provinsi</label>
-                        <input type="text" name="province" value="{{ $filters['province'] }}" class="w-full border-slate-300 rounded-lg" placeholder="Cari provinsi">
-                    </div>
-                    <div class="flex items-end gap-2">
-                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">Terapkan Filter</button>
-                        @if (array_filter($filters))
-                            <a href="{{ route('products.index') }}" class="text-xs text-slate-500 hover:text-slate-800">Reset</a>
-                        @endif
+                <form action="{{ route('products.index') }}" method="GET" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-semibold text-slate-700">Nama Produk</label>
+                            <input type="text" name="q" value="{{ $filters['q'] }}" class="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:ring-indigo-200" placeholder="Nama atau deskripsi produk">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-semibold text-slate-700">Nama Toko</label>
+                            <input type="text" name="seller" value="{{ $filters['seller'] }}" class="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:ring-indigo-200" placeholder="Contoh: Alfamidi">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-semibold text-slate-700">Kategori</label>
+                            <select name="category_id" class="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-slate-800 focus:border-indigo-400 focus:ring-indigo-200">
+                                <option value="">Semua kategori</option>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->id }}" @selected($filters['category_id'] == $category->id)>{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-semibold text-slate-700">Kota/Kabupaten</label>
+                            <input type="text" name="city" value="{{ $filters['city'] }}" class="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:ring-indigo-200" placeholder="Cari kota toko">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-sm font-semibold text-slate-700">Provinsi</label>
+                            <input type="text" name="province" value="{{ $filters['province'] }}" class="h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-slate-800 placeholder:text-slate-400 focus:border-indigo-400 focus:ring-indigo-200" placeholder="Cari provinsi">
+                        </div>
+                        <div class="flex items-end gap-2 md:justify-start xl:justify-end">
+                            <button type="submit" class="h-11 w-full md:w-auto inline-flex items-center justify-center bg-indigo-600 text-white px-5 rounded-xl text-sm font-semibold hover:bg-indigo-700 shadow-sm">
+                                Terapkan Filter
+                            </button>
+                            @if (array_filter($filters))
+                                <a href="{{ route('products.index') }}" class="h-11 inline-flex items-center justify-center px-4 rounded-xl bg-slate-100 text-sm font-medium text-slate-600 hover:bg-slate-200">Reset</a>
+                            @endif
+                        </div>
                     </div>
                 </form>
 

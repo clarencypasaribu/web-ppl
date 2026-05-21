@@ -34,6 +34,7 @@ class SellerAuthController extends Controller
                 ->withErrors('Akun penjual belum disetujui admin.');
         }
 
+        $request->session()->forget('is_admin');
         $request->session()->put('seller_auth_id', $seller->id);
 
         return redirect()

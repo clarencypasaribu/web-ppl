@@ -27,6 +27,7 @@ class AdminSessionController extends Controller
                 ->onlyInput('passcode');
         }
 
+        $request->session()->forget('seller_auth_id');
         $request->session()->put('is_admin', true);
 
         return redirect()
@@ -37,6 +38,8 @@ class AdminSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $request->session()->forget('is_admin');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect()
             ->route('admin.login')

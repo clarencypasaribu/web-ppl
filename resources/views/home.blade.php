@@ -8,13 +8,27 @@
 </head>
 <body class="bg-slate-50 text-slate-900">
     @php
+        use App\Models\Seller;
         use Illuminate\Support\Facades\Storage;
         use Illuminate\Support\Str;
+
+        $isAdmin = session('is_admin');
+        $isSeller = session()->has('seller_auth_id') && ! $isAdmin;
+        $logoRoute = route('home');
+        if ($isAdmin) {
+            $logoRoute = route('dashboard.platform');
+        } elseif ($isSeller) {
+            $logoRoute = route('seller.home');
+        }
+        $sellerGreetingName = null;
+        if ($isSeller) {
+            $sellerGreetingName = Seller::find(session('seller_auth_id'))?->store_name;
+        }
     @endphp
     <div class="relative overflow-hidden">
         <nav class="bg-white border-b border-slate-100">
             <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap gap-4 items-center justify-between">
-                <a href="{{ route('home') }}" class="flex items-center gap-3">
+                <a href="{{ $logoRoute }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/sellora-logo.png') }}" alt="Sellora" class="h-10 w-auto">
                     <span class="sr-only">Sellora</span>
                 </a>
@@ -31,25 +45,58 @@
                         </div>
                     </form>
                     <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
-                        <a href="#catalog" class="hover:text-slate-900">Katalog</a>
+                        <a href="{{ route('catalog.index') }}" class="hover:text-slate-900">Katalog</a>
                         <a href="#features" class="hover:text-slate-900">Fitur</a>
                     </div>
                 </div>
-                <div class="flex items-center gap-3 text-slate-600">
-                    <div class="relative">
-                        <button id="headerDropdownBtn" class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-purple-800">
-                            Login
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.104l3.71-3.872a.75.75 0 1 1 1.08 1.04l-4.24 4.43a.75.75 0 0 1-1.08 0l-4.24-4.43a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                        <div id="headerDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-2 text-sm">
-                            <a href="{{ route('seller.login') }}" class="block px-4 py-2 text-slate-600 hover:bg-slate-50">Login Penjual</a>
-                            <a href="{{ route('admin.login') }}" class="block px-4 py-2 text-slate-600 hover:bg-slate-50">Login Admin</a>
+                @if($isAdmin || $isSeller)
+                    <div class="flex items-center gap-3 text-slate-600">
+                        @if($sellerGreetingName)
+                            <span class="hidden md:inline text-sm font-semibold text-purple-700">Halo, Toko {{ $sellerGreetingName }}!</span>
+                        @endif
+                        <div class="relative">
+                            <button id="headerDropdownBtn" class="inline-flex items-center gap-2 text-sm font-medium text-purple-700 hover:text-purple-900 p-1 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-200" aria-label="Menu profil">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 2a5 5 0 0 0-3.536 8.536A7 7 0 0 0 3 17a1 1 0 1 0 2 0 5 5 0 0 1 10 0 1 1 0 1 0 2 0 7 7 0 0 0-3.464-6.464A5 5 0 0 0 10 2Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z" />
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.104l3.71-3.872a.75.75 0 1 1 1.08 1.04l-4.24 4.43a.75.75 0 0 1-1.08 0l-4.24-4.43a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div id="headerDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-2 text-sm">
+                                @if($isAdmin)
+                                    <a href="{{ route('admin.profile') }}" class="block px-4 py-2 text-slate-600 hover:bg-slate-50">Detail Profil</a>
+                                    <form action="{{ route('admin.logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-rose-600 hover:bg-rose-50">Logout</button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('seller.profile') }}" class="block px-4 py-2 text-slate-600 hover:bg-slate-50">Detail Profil</a>
+                                    <form action="{{ route('seller.logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-rose-600 hover:bg-rose-50">Logout</button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                    <a href="{{ route('sellers.register') }}" class="bg-purple-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-purple-700">Registrasi</a>
-                </div>
+                @else
+                    <div class="flex items-center gap-3 text-slate-600">
+                        <div class="relative">
+                            <button id="headerDropdownBtn" class="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-purple-800">
+                                Login
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.104l3.71-3.872a.75.75 0 1 1 1.08 1.04l-4.24 4.43a.75.75 0 0 1-1.08 0l-4.24-4.43a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <div id="headerDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-lg shadow-lg py-2 text-sm">
+                                <a href="{{ route('seller.login') }}" class="block px-4 py-2 text-slate-600 hover:bg-slate-50">Login Penjual</a>
+                                <a href="{{ route('admin.login') }}" class="block px-4 py-2 text-slate-600 hover:bg-slate-50">Login Admin</a>
+                            </div>
+                        </div>
+                        <a href="{{ route('sellers.register') }}" class="bg-purple-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-purple-700">Registrasi</a>
+                    </div>
+                @endif
             </div>
         </nav>
 
@@ -120,11 +167,13 @@
                             @php
                                 $avgRating = round($product->reviews_avg_rating ?? 0, 1);
                                 $highlightReview = $product->reviews->first();
+                                $productUrl = route('catalog.show', $product);
                             @endphp
-                            <article class="relative bg-white rounded-2xl shadow-sm border border-slate-200/70 overflow-hidden flex flex-col h-full transition transform hover:-translate-y-1 hover:shadow-lg">
+                            <a href="{{ $productUrl }}" class="group block h-full">
+                            <article class="relative bg-white rounded-2xl shadow-sm border border-slate-200/70 overflow-hidden flex flex-col h-full transition transform group-hover:-translate-y-1 group-hover:shadow-lg">
                                 <div class="h-44 bg-slate-100 overflow-hidden relative">
                                     @if ($product->image_path)
-                                        <img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition duration-300 hover:scale-105">
+                                        <img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-sm text-slate-400">
                                             Tidak ada foto
@@ -185,6 +234,7 @@
                                     </div>
                                 </div>
                             </article>
+                            </a>
                         @endforeach
                     </div>
                     <div class="text-center">
@@ -211,12 +261,8 @@
         </section>
 
         <footer class="bg-white border-t border-slate-100">
-            <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-slate-500 flex flex-wrap justify-between gap-3">
+            <div class="max-w-6xl mx-auto px-4 py-6 text-sm text-slate-500 flex justify-center">
                 <span>© {{ date('Y') }} Sellora Platform</span>
-                <div class="flex gap-4">
-                    <a href="{{ route('admin.login') }}" class="hover:text-slate-900">Login Admin Verifikasi</a>
-                    <a href="{{ route('products.index') }}" class="hover:text-slate-900">Kategori & Produk</a>
-                </div>
             </div>
     </footer>
     </div>

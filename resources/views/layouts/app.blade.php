@@ -11,7 +11,14 @@
     @php
         use App\Models\Seller;
 
+        $isAdmin = session('is_admin');
         $isSeller = session()->has('seller_auth_id') && ! session('is_admin');
+        $logoRoute = route('home');
+        if ($isAdmin) {
+            $logoRoute = route('dashboard.platform');
+        } elseif ($isSeller) {
+            $logoRoute = route('seller.home');
+        }
         $sellerGreetingName = null;
         if ($isSeller) {
             $sellerGreetingName = Seller::find(session('seller_auth_id'))?->store_name;
@@ -20,18 +27,17 @@
         <div class="min-h-screen flex flex-col">
             <header class="sticky top-0 z-10 bg-white border-b border-slate-100">
                 <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap gap-4 items-center justify-between">
-                    <a href="{{ route('home') }}" class="flex items-center gap-3">
+                    <a href="{{ $logoRoute }}" class="flex items-center gap-3">
                         <img src="{{ asset('images/sellora-logo.png') }}" alt="Sellora" class="h-8 w-auto">
                     </a>
                     @if(session('is_admin') || $isSeller)
                         <nav class="flex flex-wrap gap-4 text-sm font-medium text-slate-600 items-center">
                             <a href="{{ route('catalog.index') }}" class="hover:text-purple-800">Katalog Produk</a>
                             @if(session('is_admin'))
-                                <a href="{{ route('dashboard.platform') }}" class="hover:text-purple-800">Dashboard Platform</a>
                                 <a href="{{ route('sellers.verifications') }}" class="hover:text-purple-800">Verifikasi</a>
                                 <a href="{{ route('reports.platform') }}" class="hover:text-purple-800">Laporan</a>
                             @else
-                                <a href="{{ route('seller.home') }}" class="hover:text-purple-800">Dashboard</a>
+                                <a href="{{ route('products.index') }}" class="hover:text-purple-800">Kelola Kategori</a>
                                 <a href="{{ route('products.create') }}" class="hover:text-purple-800">Upload Produk</a>
                                 <a href="{{ route('reports.seller') }}" class="hover:text-purple-800">Laporan</a>
                             @endif
