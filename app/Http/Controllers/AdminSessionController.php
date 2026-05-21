@@ -31,7 +31,7 @@ class AdminSessionController extends Controller
         $request->session()->put('is_admin', true);
 
         return redirect()
-            ->route('sellers.verifications')
+            ->route('dashboard.platform')
             ->with('status', 'admin_logged_in');
     }
 
