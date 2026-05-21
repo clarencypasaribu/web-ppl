@@ -8,21 +8,27 @@
             ? number_format((float) $priceNumeric, fmod((float) $priceNumeric, 1.0) === 0.0 ? 0 : 2, ',', '.')
             : '';
     }
+
+    $sellerFromProduct = $product?->seller;
+    $sellerName = $sellerFromProduct->store_name ?? $currentSeller?->store_name ?? null;
+    $sellerCity = $sellerFromProduct->city ?? $currentSeller?->city ?? null;
+    $sellerProvince = $sellerFromProduct->province ?? $currentSeller?->province ?? null;
+    $sellerLocationParts = array_filter([$sellerCity, $sellerProvince]);
+    $sellerLocation = $sellerLocationParts ? implode(', ', $sellerLocationParts) : null;
 @endphp
 
 <div class="space-y-6">
     <div class="grid md:grid-cols-2 gap-4">
-        <div>
-            <label for="seller_id" class="block text-sm font-semibold text-slate-700 mb-1">Pemilik Toko *</label>
-            <select id="seller_id" name="seller_id" class="w-full border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-200" required>
-                <option value="">Pilih penjual</option>
-                @foreach ($sellers as $seller)
-                    <option value="{{ $seller->id }}" @selected(old('seller_id', $product->seller_id ?? '') == $seller->id)>
-                        {{ $seller->store_name }} ({{ $seller->province }})
-                    </option>
-                @endforeach
-            </select>
-        </div>
+        @if ($sellerName)
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                <p class="text-xs uppercase tracking-[0.25em] text-indigo-500 font-semibold mb-2">Produk untuk Toko</p>
+                <p class="text-base font-semibold text-slate-900">{{ $sellerName }}</p>
+                @if ($sellerLocation)
+                    <p class="text-xs text-slate-500 mt-1">{{ $sellerLocation }}</p>
+                @endif
+                <p class="text-xs text-slate-500 mt-3">Produk baru akan otomatis dikaitkan dengan toko ini.</p>
+            </div>
+        @endif
         <div>
             <label for="category_id" class="block text-sm font-semibold text-slate-700 mb-1">Kategori *</label>
             <select id="category_id" name="category_id" class="w-full border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-200" required>

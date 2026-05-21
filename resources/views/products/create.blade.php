@@ -31,7 +31,7 @@
 
         <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="bg-white shadow-sm border border-slate-100 rounded-2xl p-6">
             @csrf
-            @include('products.partials.form', ['product' => null, 'categories' => $categories, 'sellers' => $sellers])
+            @include('products.partials.form', ['product' => null, 'categories' => $categories, 'currentSeller' => $currentSeller])
         </form>
     </div>
 @endsection

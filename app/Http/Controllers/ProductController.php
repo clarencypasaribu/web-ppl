@@ -71,17 +71,18 @@ class ProductController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
         $categories = Category::orderBy('name')->get();
-        $sellers = Seller::orderBy('store_name')->get();
+        $currentSeller = Seller::findOrFail($this->authenticatedSellerId($request));
 
-        return view('products.create', compact('categories', 'sellers'));
+        return view('products.create', compact('categories', 'currentSeller'));
     }
 
     public function store(StoreProductRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $data['seller_id'] = $this->authenticatedSellerId($request);
         $data['price'] = $this->normalizePrice($data['price']);
         $data['is_active'] = $request->boolean('is_active', true);
 
@@ -98,16 +99,21 @@ class ProductController extends Controller
             ->with('status', 'product_created');
     }
 
-    public function edit(Product $product): View
+    public function edit(Request $request, Product $product): View
     {
-        $categories = Category::orderBy('name')->get();
-        $sellers = Seller::orderBy('store_name')->get();
+        $this->ensureProductBelongsToSeller($request, $product);
 
-        return view('products.edit', compact('product', 'categories', 'sellers'));
+        $categories = Category::orderBy('name')->get();
+        $product->loadMissing('seller');
+        $currentSeller = $product->seller;
+
+        return view('products.edit', compact('product', 'categories', 'currentSeller'));
     }
 
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
+        $this->ensureProductBelongsToSeller($request, $product);
+
         $data = $request->validated();
         $data['price'] = $this->normalizePrice($data['price']);
         $data['is_active'] = $request->boolean('is_active', false);
@@ -129,8 +135,10 @@ class ProductController extends Controller
             ->with('status', 'product_updated');
     }
 
-    public function destroy(Product $product): RedirectResponse
+    public function destroy(Request $request, Product $product): RedirectResponse
     {
+        $this->ensureProductBelongsToSeller($request, $product);
+
         if ($product->image_path) {
             Storage::disk('public')->delete($product->image_path);
         }
@@ -152,5 +160,21 @@ class ProductController extends Controller
         }
 
         return (float) $price;
+    }
+
+    private function authenticatedSellerId(Request $request): int
+    {
+        $sellerId = (int) $request->session()->get('seller_auth_id');
+
+        abort_if(! $sellerId, 403, 'Silakan login sebagai penjual.');
+
+        return $sellerId;
+    }
+
+    private function ensureProductBelongsToSeller(Request $request, Product $product): void
+    {
+        $sellerId = $this->authenticatedSellerId($request);
+
+        abort_if((int) $product->seller_id !== $sellerId, 403, 'Produk tidak ditemukan.');
     }
 }

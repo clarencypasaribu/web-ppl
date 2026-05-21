@@ -24,7 +24,7 @@
         <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data" class="bg-white shadow rounded-xl p-6">
             @csrf
             @method('PUT')
-            @include('products.partials.form', ['product' => $product, 'categories' => $categories, 'sellers' => $sellers])
+            @include('products.partials.form', ['product' => $product, 'categories' => $categories, 'currentSeller' => $currentSeller])
         </form>
     </div>
 @endsection
